@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { loadBook, withStats, addOutreach, type Book } from '../lib/db'
 import { Card, Loading, ErrorNote, Badge, Button, ContactFlag } from '../components/ui'
-import { OutreachModal, PurchaseModal } from '../components/modals'
+import { ClientModal, OutreachModal, PurchaseModal } from '../components/modals'
 import { useToast } from '../hooks/useToast'
 import { money, timeAgo, todayISO, greeting, monthLabel, contactHealth, birthdayLabel, daysUntilBirthday } from '../lib/format'
 import type { ClientStats } from '../lib/types'
@@ -16,6 +16,8 @@ export default function Dashboard() {
   const [error, setError]     = useState<string | null>(null)
   const [showOutreach, setShowOutreach] = useState(false)
   const [showPurchase, setShowPurchase] = useState(false)
+  const [showClient, setShowClient]     = useState(false)
+  const [menuOpen, setMenuOpen]         = useState(false)
 
   async function reload() {
     if (!tenantId) return
@@ -84,9 +86,21 @@ export default function Dashboard() {
           <h1 className="font-display text-3xl font-semibold tracking-tight text-[#2f3a24]">{greeting()}</h1>
           <p className="mt-1 text-sm text-slate-500">Here's where {tenantName || 'your book'} stands today.</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="secondary" onClick={() => setShowPurchase(true)} disabled={clients.length === 0}>Record purchase</Button>
-          <Button onClick={() => setShowOutreach(true)} disabled={clients.length === 0}>Log outreach</Button>
+        <div className="relative">
+          <Button onClick={() => setMenuOpen(o => !o)}>+ Add</Button>
+          {menuOpen && (
+            <>
+              <div className="fixed inset-0 z-40" onClick={() => setMenuOpen(false)} />
+              <div className="absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+                <button onClick={() => { setMenuOpen(false); setShowClient(true) }}
+                  className="block w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50">Add client</button>
+                <button onClick={() => { setMenuOpen(false); setShowOutreach(true) }} disabled={clients.length === 0}
+                  className="block w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Add outreach</button>
+                <button onClick={() => { setMenuOpen(false); setShowPurchase(true) }} disabled={clients.length === 0}
+                  className="block w-full px-4 py-2.5 text-left text-sm text-slate-700 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Add purchase</button>
+              </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -188,6 +202,7 @@ export default function Dashboard() {
         </Card>
       </div>
 
+      {showClient && <ClientModal tenantId={tenantId!} defaultRep="Viscount" onClose={() => setShowClient(false)} onSaved={reload} />}
       {showOutreach && <OutreachModal tenantId={tenantId!} clients={clientOptions} onClose={() => setShowOutreach(false)} onSaved={reload} />}
       {showPurchase && <PurchaseModal tenantId={tenantId!} clients={clientOptions} onClose={() => setShowPurchase(false)} onSaved={reload} />}
     </div>
