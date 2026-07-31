@@ -16,7 +16,7 @@ export default function Guide() {
       <div className="max-w-2xl space-y-3">
         {STEPS.map(s => (
           <Card key={s.n} className="flex items-start gap-4 p-5">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#0c2340] text-sm font-bold text-white">{s.n}</div>
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#c15a2e] text-sm font-bold text-white">{s.n}</div>
             <div>
               <h3 className="text-sm font-semibold text-slate-800">{s.title}</h3>
               <p className="mt-0.5 text-sm text-slate-500">{s.body}</p>

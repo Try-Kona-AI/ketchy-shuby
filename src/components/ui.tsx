@@ -5,15 +5,9 @@ import type { ClientStatus, OutreachType, OutreachOutcome } from '../lib/types'
 export function KonaLogo({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 34 34" fill="none">
-      <rect x="1" y="1" width="32" height="32" rx="9" fill="url(#konaGrad)"/>
-      <path d="M12 9.5v15M12 17.2l6.3-6.3M13.2 16.4l6 8.1" stroke="#fff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
-      <circle cx="23.6" cy="11" r="1.9" fill="#f5b91e"/>
-      <defs>
-        <linearGradient id="konaGrad" x1="1" y1="1" x2="33" y2="33" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#0a86e6"/>
-          <stop offset="1" stopColor="#005aa6"/>
-        </linearGradient>
-      </defs>
+      <rect x="1" y="1" width="32" height="32" rx="9" fill="#2f3a24"/>
+      <text x="17" y="22.5" textAnchor="middle" fontFamily="Fraunces, Georgia, serif" fontSize="14.5" fontWeight="500" fill="#ece5d3" letterSpacing="0.3">KS</text>
+      <circle cx="26.5" cy="8.5" r="1.9" fill="#c15a2e"/>
     </svg>
   )
 }
@@ -158,7 +152,7 @@ export function Button({
   }
 
   const variants: Record<BtnVariant, string> = {
-    primary:   'bg-[#0c2340] text-white hover:bg-[#15315a] shadow-sm',
+    primary:   'bg-[#2f3a24] text-[#ece5d3] hover:bg-[#3c4a2f] shadow-sm',
     secondary: 'border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 shadow-sm',
     ghost:     'text-slate-600 hover:bg-slate-100',
     danger:    'bg-red-600 text-white hover:bg-red-700 shadow-sm',
@@ -251,7 +245,7 @@ export function PageHeader({
   return (
     <div className="mb-6 flex items-start justify-between gap-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">{title}</h1>
+        <h1 className="font-display text-3xl font-semibold tracking-tight text-[#2f3a24]">{title}</h1>
         {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </div>
       {action}

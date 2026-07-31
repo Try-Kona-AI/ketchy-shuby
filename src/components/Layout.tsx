@@ -53,8 +53,8 @@ function NavItemBtn({ to, label, end, icon }: NavItem) {
       className={({ isActive }) =>
         `flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-medium transition-all ${
           isActive
-            ? 'bg-white/15 text-white shadow-sm'
-            : 'text-slate-400 hover:bg-white/8 hover:text-slate-200'
+            ? 'bg-[#c15a2e] text-[#fbf3e6] shadow-sm'
+            : 'text-[#b7ad95] hover:bg-white/8 hover:text-[#ece5d3]'
         }`
       }
     >
@@ -77,10 +77,10 @@ export default function Layout() {
     <>
       {/* Logo / branding */}
       <div className="flex items-center gap-2.5 px-5 py-5 border-b border-white/10">
-        <KonaLogo size={32} />
+        <KonaLogo size={34} />
         <div className="leading-tight min-w-0">
-          <div className="text-sm font-semibold text-white truncate">{displayName}</div>
-          <div className="text-[11px] text-slate-500">Powered by Kona AI</div>
+          <div className="font-display text-[15px] font-medium tracking-wide text-[#ece5d3] truncate">{displayName}</div>
+          <div className="text-[11px] text-[#8f8770]">Powered by Kona AI</div>
         </div>
       </div>
 
@@ -112,7 +112,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-slate-100">
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 bg-[#0c2340] px-4 md:hidden">
+      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 bg-[#2f3a24] px-4 md:hidden">
         <button
           onClick={() => setOpen(o => !o)}
           aria-label="Toggle menu"
@@ -129,7 +129,7 @@ export default function Layout() {
           )}
         </button>
         <KonaLogo size={24} />
-        <span className="text-sm font-semibold text-white truncate">{displayName}</span>
+        <span className="font-display text-[15px] font-medium tracking-wide text-[#ece5d3] truncate">{displayName}</span>
       </header>
 
       {/* Drawer backdrop */}
@@ -138,7 +138,7 @@ export default function Layout() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 flex w-62 flex-col bg-[#0c2340] transition-transform duration-200 ease-in-out md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 flex w-62 flex-col bg-[#2f3a24] transition-transform duration-200 ease-in-out md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         {sidebar}
       </aside>
 

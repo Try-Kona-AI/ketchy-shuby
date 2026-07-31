@@ -39,11 +39,11 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#061524] via-[#0c2340] to-[#0a1e38] p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#232c1a] via-[#2f3a24] to-[#232c1a] p-4">
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-blue-600/10 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-blue-800/10 blur-3xl" />
+        <div className="absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#c15a2e]/15 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-[#c15a2e]/10 blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
@@ -51,14 +51,14 @@ export default function Login() {
         <div className="flex items-center justify-center gap-3 mb-8">
           <KonaLogo size={44} />
           <div>
-            <div className="text-2xl font-bold text-white tracking-tight leading-none">Ketchy Shuby</div>
-            <div className="text-xs text-slate-500 mt-0.5">Client &amp; Outreach CRM</div>
+            <div className="font-display text-2xl font-medium text-[#ece5d3] tracking-[0.12em] leading-none">KETCHY SHUBY</div>
+            <div className="text-xs text-[#8f8770] mt-1 tracking-wide">Client &amp; Outreach CRM</div>
           </div>
         </div>
 
         {/* Card */}
         <div className="rounded-2xl bg-white/95 backdrop-blur p-8 shadow-2xl shadow-black/30">
-          <h1 className="text-xl font-bold text-slate-900 tracking-tight">
+          <h1 className="font-display text-2xl font-semibold text-[#2f3a24] tracking-tight">
             {mode === 'signin' ? 'Welcome back' : 'Create your account'}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
@@ -74,7 +74,7 @@ export default function Login() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#c15a2e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#c15a2e]/20"
               />
             </div>
 
@@ -86,7 +86,7 @@ export default function Login() {
                 placeholder={mode === 'signup' ? 'At least 8 characters' : '••••••••'}
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#c15a2e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#c15a2e]/20"
               />
             </div>
 
@@ -111,7 +111,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-xl bg-[#0c2340] py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#15315a] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
+              className="w-full rounded-xl bg-[#2f3a24] py-2.5 text-sm font-semibold text-[#ece5d3] shadow-sm transition-colors hover:bg-[#3c4a2f] disabled:opacity-60 disabled:cursor-not-allowed mt-2"
             >
               {loading ? '…' : mode === 'signin' ? 'Sign in' : 'Create account'}
             </button>
@@ -119,7 +119,7 @@ export default function Login() {
 
           <div className="mt-5 text-center text-sm text-slate-500">
             {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
-            <button onClick={switchMode} className="font-semibold text-blue-600 hover:text-blue-700 transition-colors">
+            <button onClick={switchMode} className="font-semibold text-[#c15a2e] hover:text-[#a54a24] transition-colors">
               {mode === 'signin' ? 'Sign up' : 'Sign in'}
             </button>
           </div>

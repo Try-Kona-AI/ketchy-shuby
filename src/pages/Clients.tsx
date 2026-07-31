@@ -152,7 +152,7 @@ export default function Clients() {
               key={f.value}
               onClick={() => setFilter(f.value)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                filter === f.value ? 'bg-[#0c2340] text-white' : 'text-slate-500 hover:bg-slate-100'
+                filter === f.value ? 'bg-[#2f3a24] text-[#ece5d3]' : 'text-slate-500 hover:bg-slate-100'
               }`}
             >
               {f.label}{f.value === 'needs_contact' && needsCount ? ` (${needsCount})` : ''}

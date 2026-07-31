@@ -1,5 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..600;1,9..144,400..500&family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..600&display=swap');
 @import "tailwindcss";
+
+/* ── Ketchy Shuby brand ─────────────────────────────────────────────── */
+:root {
+  --ks-green:      #2f3a24;  /* deep forest/olive — sidebar, login */
+  --ks-green-dark: #232c1a;
+  --ks-green-soft: #3c4a2f;
+  --ks-orange:     #c15a2e;  /* burnt terracotta — accents, CTAs */
+  --ks-orange-dk:  #a54a24;
+  --ks-cream:      #ece5d3;  /* text/logo on green */
+  --ks-cream-mut:  #b7ad95;
+}
+.font-display { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; }
 
 *, *::before, *::after { box-sizing: border-box; }
 

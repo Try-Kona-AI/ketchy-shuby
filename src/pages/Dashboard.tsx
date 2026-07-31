@@ -85,7 +85,7 @@ export default function Dashboard() {
     <div>
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">{greeting()}</h1>
+          <h1 className="font-display text-3xl font-semibold tracking-tight text-[#2f3a24]">{greeting()}</h1>
           <p className="mt-1 text-sm text-slate-500">Here's where {tenantName || 'your book'} stands today.</p>
         </div>
         <div className="flex gap-2">
@@ -150,7 +150,7 @@ export default function Dashboard() {
               {monthly.map(m => (
                 <div key={m.key} className="flex flex-1 flex-col items-center gap-1.5">
                   <div className="flex w-full flex-1 items-end">
-                    <div className="w-full rounded-t-md bg-blue-500/90" style={{ height: `${Math.max(2, (m.total / maxMonth) * 100)}%` }} title={money(m.total)} />
+                    <div className="w-full rounded-t-md bg-[#c15a2e]" style={{ height: `${Math.max(2, (m.total / maxMonth) * 100)}%` }} title={money(m.total)} />
                   </div>
                   <span className="text-[10px] text-slate-400">{monthLabel(m.key + '-01')}</span>
                 </div>
@@ -208,7 +208,7 @@ export default function Dashboard() {
 }
 
 function Stat({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent?: 'amber' | 'emerald' | 'blue' | 'red' }) {
-  const accentCls = accent === 'amber' ? 'text-amber-600' : accent === 'emerald' ? 'text-emerald-600' : accent === 'blue' ? 'text-blue-600' : accent === 'red' ? 'text-rose-600' : 'text-slate-900'
+  const accentCls = accent === 'amber' ? 'text-amber-600' : accent === 'emerald' ? 'text-emerald-600' : accent === 'blue' ? 'text-[#c15a2e]' : accent === 'red' ? 'text-rose-600' : 'text-slate-900'
   return (
     <Card className="p-5">
       <div className="text-xs font-medium uppercase tracking-wide text-slate-400">{label}</div>
@@ -225,7 +225,7 @@ function SectionHeader({ title, hint, to }: { title: string; hint?: string; to?:
         <h2 className="text-sm font-semibold text-slate-800">{title}</h2>
         {hint && <p className="text-xs text-slate-400">{hint}</p>}
       </div>
-      {to && <Link to={to} className="text-xs font-medium text-blue-600 hover:text-blue-700">View all →</Link>}
+      {to && <Link to={to} className="text-xs font-medium text-[#c15a2e] hover:text-[#a54a24]">View all →</Link>}
     </div>
   )
 }
