@@ -59,11 +59,13 @@ export interface ContactHealth {
   days: number | null   // days since last contact; null = never
 }
 
+// The rule: not contacted in 30 days (or never) = needs a follow-up.
+export const FOLLOWUP_DAYS = 30
+
 export function contactHealth(lastOutreachOn: string | null | undefined): ContactHealth {
   const n = daysAgo(lastOutreachOn)
   if (n === null) return { level: 'red', label: 'Never contacted', days: null }
-  if (n >= 28) return { level: 'red', label: `${n}d — overdue`, days: n }
-  if (n >= 21) return { level: 'yellow', label: `${n}d — due soon`, days: n }
+  if (n >= FOLLOWUP_DAYS) return { level: 'red', label: `${n}d — follow up`, days: n }
   return { level: 'green', label: `${n}d ago`, days: n }
 }
 

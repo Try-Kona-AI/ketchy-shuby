@@ -29,18 +29,14 @@ export default function Dashboard() {
   const clientName = useMemo(() => Object.fromEntries(clients.map(c => [c.id, c.name])), [clients])
   const today = todayISO()
 
-  // Contact cadence: who needs a touch (red first, then yellow), worst overdue on top
+  // The 30-day rule: not contacted in 30+ days (or never) = needs a follow-up.
   const needsContact = useMemo(() => {
     return clients
       .map(c => ({ c, h: contactHealth(c.last_outreach_on) }))
       .filter(x => x.h.level !== 'green')
-      .sort((a, b) => {
-        if (a.h.level !== b.h.level) return a.h.level === 'red' ? -1 : 1
-        return (b.h.days ?? 9999) - (a.h.days ?? 9999)
-      })
+      .sort((a, b) => (b.h.days ?? 99999) - (a.h.days ?? 99999)) // never-contacted, then longest-overdue first
   }, [clients])
-  const redCount = needsContact.filter(x => x.h.level === 'red').length
-  const yellowCount = needsContact.filter(x => x.h.level === 'yellow').length
+  const needCount = needsContact.length
 
   // Upcoming birthdays (next 30 days)
   const birthdays = useMemo(() => {
@@ -98,15 +94,15 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label="Clients" value={String(clients.length)} sub={`${clients.filter(c => c.status === 'vip').length} VIP`} />
-        <Stat label="Overdue" value={String(redCount)} sub="4+ weeks, contact now" accent={redCount ? 'red' : 'emerald'} />
-        <Stat label="Due soon" value={String(yellowCount)} sub="3 weeks out" accent={yellowCount ? 'amber' : 'emerald'} />
-        <Stat label="Spend this month" value={money(monthSpend)} sub={`${money(totalSpend)} all-time`} accent="blue" />
+        <Stat label="Needs follow-up" value={String(needCount)} sub="30+ days since contact" accent={needCount ? 'red' : 'emerald'} />
+        <Stat label="Spend this month" value={money(monthSpend)} sub="this month" accent="blue" />
+        <Stat label="Lifetime spend" value={money(totalSpend)} sub="all-time" accent="blue" />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         {/* Needs contact */}
         <Card className="lg:col-span-2">
-          <SectionHeader title="Needs contact" hint="Monthly minimum · yellow at 3 wks, red at 4" to="/clients" />
+          <SectionHeader title="Needs follow-up" hint="Not contacted in 30+ days" to="/clients" />
           <div className="divide-y divide-slate-100">
             {needsContact.length === 0 && <p className="px-5 py-8 text-center text-sm text-slate-400">Everyone's been touched recently. Nice.</p>}
             {needsContact.slice(0, 7).map(({ c, h }) => (

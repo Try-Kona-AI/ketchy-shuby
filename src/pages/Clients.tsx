@@ -14,7 +14,7 @@ import type { Client, ClientStats, ClientStatus } from '../lib/types'
 type FilterKey = ClientStatus | 'all' | 'needs_contact'
 const STATUS_FILTERS: { value: FilterKey; label: string }[] = [
   { value: 'all', label: 'All' },
-  { value: 'needs_contact', label: 'Needs contact' },
+  { value: 'needs_contact', label: 'Follow-up' },
   { value: 'vip', label: 'VIP' },
   { value: 'active', label: 'Active' },
   { value: 'prospect', label: 'Prospect' },
@@ -111,7 +111,7 @@ export default function Clients() {
     <div>
       <PageHeader
         title="Clients"
-        subtitle={`${clients.length} total · ${needsCount} need a touch · ${money(clients.reduce((s, c) => s + c.lifetime_spend, 0))} lifetime`}
+        subtitle={`${clients.length} total · ${needsCount} need follow-up · ${money(clients.reduce((s, c) => s + c.lifetime_spend, 0))} lifetime`}
         action={<Button variant="secondary" onClick={() => setShowAdd(true)}>Add with details</Button>}
       />
 
@@ -290,7 +290,7 @@ function ClientDrawer({
         <div className={`flex items-center justify-between px-6 py-3 text-sm ${
           health.level === 'red' ? 'bg-rose-50 text-rose-700' : health.level === 'yellow' ? 'bg-amber-50 text-amber-700' : 'bg-emerald-50 text-emerald-700'
         }`}>
-          <span className="flex items-center gap-2"><ContactFlag level={health.level} /> {health.level === 'green' ? 'Contact is current' : health.level === 'yellow' ? 'Due for a touch soon' : 'Overdue for contact'}</span>
+          <span className="flex items-center gap-2"><ContactFlag level={health.level} /> {health.level === 'green' ? 'Contact is current' : 'Needs a follow-up (30+ days)'}</span>
           <span className="text-xs opacity-80">{health.label}</span>
         </div>
 

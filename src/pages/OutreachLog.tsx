@@ -4,22 +4,12 @@ import { loadBook, deleteOutreach, type Book } from '../lib/db'
 import { Card, Loading, ErrorNote, EmptyState, Badge, Button, PageHeader, DeleteButton, statusLabel } from '../components/ui'
 import { OutreachModal } from '../components/modals'
 import { shortDate } from '../lib/format'
-import type { OutreachType } from '../lib/types'
-
-const TYPE_FILTERS: { value: OutreachType | 'all'; label: string }[] = [
-  { value: 'all', label: 'All' },
-  { value: 'check_in', label: 'Check-ins' },
-  { value: 'pitch', label: 'Pitches' },
-  { value: 'follow_up', label: 'Follow-ups' },
-  { value: 'other', label: 'Notes' },
-]
 
 export default function OutreachLog() {
   const { tenantId } = useAuth()
   const [book, setBook]       = useState<Book | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState<string | null>(null)
-  const [filter, setFilter]   = useState<OutreachType | 'all'>('all')
   const [search, setSearch]   = useState('')
   const [showLog, setShowLog] = useState(false)
 
@@ -39,12 +29,11 @@ export default function OutreachLog() {
 
   const rows = useMemo(() => {
     const q = search.trim().toLowerCase()
-    return (book?.outreach ?? []).filter(o => {
-      if (filter !== 'all' && o.type !== filter) return false
-      if (!q) return true
-      return (clientName[o.client_id] ?? '').toLowerCase().includes(q) || (o.notes ?? '').toLowerCase().includes(q)
-    })
-  }, [book, filter, search, clientName])
+    if (!q) return book?.outreach ?? []
+    return (book?.outreach ?? []).filter(o =>
+      (clientName[o.client_id] ?? '').toLowerCase().includes(q) || (o.notes ?? '').toLowerCase().includes(q),
+    )
+  }, [book, search, clientName])
 
   async function del(id: string) {
     if (!window.confirm('Delete this outreach entry?')) return
@@ -63,32 +52,18 @@ export default function OutreachLog() {
 
       {error && <div className="mb-6"><ErrorNote message={error} /></div>}
 
-      <div className="mb-4 flex flex-wrap items-center gap-3">
-        <input
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search by client or notes…"
-          className="flex-1 min-w-[200px] rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100"
-        />
-        <div className="flex gap-1 rounded-xl border border-slate-200 bg-white p-1">
-          {TYPE_FILTERS.map(f => (
-            <button
-              key={f.value}
-              onClick={() => setFilter(f.value)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                filter === f.value ? 'bg-[#2f3a24] text-[#ece5d3]' : 'text-slate-500 hover:bg-slate-100'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* One lever: search. */}
+      <input
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Search by client or notes…"
+        className="mb-4 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#c15a2e] focus:outline-none focus:ring-2 focus:ring-[#c15a2e]/20"
+      />
 
       {(book?.outreach.length ?? 0) === 0 ? (
         <Card><EmptyState message="No outreach logged yet. Every check-in, pitch, and follow-up shows up here." action={<Button onClick={() => setShowLog(true)} disabled={clientOptions.length === 0}>Log your first touch</Button>} /></Card>
       ) : rows.length === 0 ? (
-        <Card><EmptyState message="Nothing matches your filters." /></Card>
+        <Card><EmptyState message="No outreach matches your search." /></Card>
       ) : (
         <Card className="overflow-hidden">
           <div className="divide-y divide-slate-100">
