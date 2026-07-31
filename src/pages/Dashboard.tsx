@@ -115,7 +115,7 @@ export default function Dashboard() {
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
         {/* Needs contact */}
-        <Card className="lg:col-span-2">
+        <Card className="order-1 lg:order-none lg:col-span-2">
           <SectionHeader title="Needs follow-up" hint="Not contacted in 30+ days" to="/clients" />
           <div className="divide-y divide-slate-100">
             {needsContact.length === 0 && <p className="px-5 py-8 text-center text-sm text-slate-400">Everyone's been touched recently. Nice.</p>}
@@ -136,7 +136,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Birthdays */}
-        <Card>
+        <Card className="order-4 lg:order-none">
           <SectionHeader title="Upcoming birthdays" hint="Next 30 days" />
           <div className="divide-y divide-slate-100">
             {birthdays.length === 0 && <p className="px-5 py-8 text-center text-sm text-slate-400">None in the next 30 days.</p>}
@@ -148,11 +148,9 @@ export default function Dashboard() {
             ))}
           </div>
         </Card>
-      </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
         {/* Spend chart */}
-        <Card>
+        <Card className="order-3 lg:order-none">
           <SectionHeader title="Spend · last 6 mo" />
           <div className="px-4 pb-4 pt-3">
             <SpendLineChart monthly={monthly} max={maxMonth} />
@@ -161,7 +159,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Top clients */}
-        <Card>
+        <Card className="order-2 lg:order-none">
           <SectionHeader title="Top clients by spend" to="/clients" />
           <div className="divide-y divide-slate-100">
             {topClients.length === 0 && <p className="px-5 py-8 text-center text-sm text-slate-400">No clients yet.</p>}
@@ -181,7 +179,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Recent outreach */}
-        <Card>
+        <Card className="order-5 lg:order-none">
           <SectionHeader title="Recent outreach" to="/outreach" />
           <div className="divide-y divide-slate-100">
             {recentOutreach.length === 0 && <p className="px-5 py-8 text-center text-sm text-slate-400">No outreach logged yet.</p>}
