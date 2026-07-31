@@ -112,7 +112,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-slate-100">
       {/* Mobile top bar */}
-      <header className="sticky top-0 z-30 flex h-14 items-center gap-3 bg-[#2f3a24] px-4 md:hidden">
+      <header className="sticky top-0 z-30 flex min-h-14 items-center gap-3 bg-[#2f3a24] px-4 pt-[env(safe-area-inset-top)] md:hidden">
         <button
           onClick={() => setOpen(o => !o)}
           aria-label="Toggle menu"
@@ -138,13 +138,13 @@ export default function Layout() {
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-50 flex w-62 flex-col bg-[#2f3a24] transition-transform duration-200 ease-in-out md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 flex w-62 flex-col bg-[#2f3a24] pt-[env(safe-area-inset-top)] transition-transform duration-200 ease-in-out md:translate-x-0 ${open ? 'translate-x-0' : '-translate-x-full'}`}>
         {sidebar}
       </aside>
 
       {/* Main content */}
       <main className="md:ml-62">
-        <div className="mx-auto max-w-6xl px-4 py-6 md:px-8 md:py-8 fade-up">
+        <div className="mx-auto max-w-6xl px-4 py-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] md:px-8 md:py-8 fade-up">
           <Outlet />
         </div>
       </main>
