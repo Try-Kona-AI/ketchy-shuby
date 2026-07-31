@@ -116,17 +116,17 @@ export default function Clients() {
 
       {/* Quick add: name + phone, that's it */}
       <Card className="mb-4 p-3">
-        <form onSubmit={quickAdd} className="flex flex-wrap items-center gap-2">
-          <span className="px-1 text-xs font-medium uppercase tracking-wide text-slate-400">Quick add</span>
+        <form onSubmit={quickAdd} className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <span className="px-1 text-xs font-medium uppercase tracking-wide text-slate-400 sm:shrink-0">Quick add</span>
           <input
             value={qName} onChange={e => setQName(e.target.value)} placeholder="Name"
-            className="min-w-[140px] flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm focus:border-[#c15a2e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#c15a2e]/20 sm:min-w-0 sm:flex-1"
           />
           <input
             value={qPhone} onChange={e => setQPhone(e.target.value)} placeholder="Phone" inputMode="tel"
-            className="min-w-[140px] flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm focus:border-[#c15a2e] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#c15a2e]/20 sm:min-w-0 sm:flex-1"
           />
-          <Button type="submit" disabled={qBusy}>{qBusy ? 'Adding…' : 'Add'}</Button>
+          <Button type="submit" disabled={qBusy} className="w-full sm:w-auto">{qBusy ? 'Adding…' : 'Add'}</Button>
         </form>
       </Card>
 
