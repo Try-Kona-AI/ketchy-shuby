@@ -111,7 +111,7 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2">
                     <ContactFlag level={h.level} />
                     <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
-                    <Badge status={c.status} kind="client" />
+                    {c.status === 'vip' && <Badge status="vip" kind="client" />}
                   </div>
                   <div className="mt-0.5 pl-4 text-xs text-slate-400">{c.phone ? `${c.phone} · ` : ''}{money(c.lifetime_spend)} lifetime</div>
                 </Link>
@@ -141,18 +141,9 @@ export default function Dashboard() {
         {/* Spend chart */}
         <Card>
           <SectionHeader title="Spend · last 6 mo" />
-          <div className="px-5 pb-5 pt-2">
-            <div className="flex h-32 items-end gap-2">
-              {monthly.map(m => (
-                <div key={m.key} className="flex flex-1 flex-col items-center gap-1.5">
-                  <div className="flex w-full flex-1 items-end">
-                    <div className="w-full rounded-t-md bg-[#c15a2e]" style={{ height: `${Math.max(2, (m.total / maxMonth) * 100)}%` }} title={money(m.total)} />
-                  </div>
-                  <span className="text-[10px] text-slate-400">{monthLabel(m.key + '-01')}</span>
-                </div>
-              ))}
-            </div>
-            <div className="mt-3 text-center text-xs text-slate-400">Peak {money(maxMonth)}</div>
+          <div className="px-4 pb-4 pt-3">
+            <SpendLineChart monthly={monthly} max={maxMonth} />
+            <div className="mt-2 text-center text-xs text-slate-400">Peak {money(maxMonth)}</div>
           </div>
         </Card>
 
@@ -223,5 +214,30 @@ function SectionHeader({ title, hint, to }: { title: string; hint?: string; to?:
       </div>
       {to && <Link to={to} className="text-xs font-medium text-[#c15a2e] hover:text-[#a54a24]">View all →</Link>}
     </div>
+  )
+}
+
+function SpendLineChart({ monthly, max }: { monthly: { key: string; total: number }[]; max: number }) {
+  const W = 320, H = 132, padX = 16, padTop = 14, padBottom = 24
+  const innerW = W - padX * 2, innerH = H - padTop - padBottom
+  const n = monthly.length
+  const xAt = (i: number) => padX + (n <= 1 ? innerW / 2 : (innerW * i) / (n - 1))
+  const yAt = (v: number) => padTop + innerH - (max > 0 ? (v / max) * innerH : 0)
+  const pts = monthly.map((m, i) => [xAt(i), yAt(m.total)] as const)
+  const line = pts.map((p, i) => `${i ? 'L' : 'M'}${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ')
+  const base = padTop + innerH
+  const area = `${line} L${xAt(n - 1).toFixed(1)},${base} L${xAt(0).toFixed(1)},${base} Z`
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: 150 }} role="img" aria-label="Spend over the last 6 months">
+      <line x1={padX} y1={base} x2={W - padX} y2={base} stroke="#e2e8f0" strokeWidth="1" />
+      <path d={area} fill="#c15a2e" opacity="0.12" />
+      <path d={line} fill="none" stroke="#c15a2e" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      {pts.map((p, i) => (
+        <g key={monthly[i].key}>
+          <circle cx={p[0]} cy={p[1]} r="3" fill="#c15a2e"><title>{money(monthly[i].total)}</title></circle>
+          <text x={p[0]} y={H - 7} textAnchor="middle" fontSize="10" fill="#94a3b8">{monthLabel(monthly[i].key + '-01')}</text>
+        </g>
+      ))}
+    </svg>
   )
 }

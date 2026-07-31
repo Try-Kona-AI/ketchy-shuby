@@ -9,16 +9,13 @@ import {
 import { ClientModal, OutreachModal, PurchaseModal } from '../components/modals'
 import { useToast } from '../hooks/useToast'
 import { money, shortDate, timeAgo, todayISO, contactHealth, birthdayLabel, daysUntilBirthday } from '../lib/format'
-import type { Client, ClientStats, ClientStatus } from '../lib/types'
+import type { Client, ClientStats } from '../lib/types'
 
-type FilterKey = ClientStatus | 'all' | 'needs_contact'
+type FilterKey = 'all' | 'active' | 'follow_up'
 const STATUS_FILTERS: { value: FilterKey; label: string }[] = [
   { value: 'all', label: 'All' },
-  { value: 'needs_contact', label: 'Follow-up' },
-  { value: 'vip', label: 'VIP' },
   { value: 'active', label: 'Active' },
-  { value: 'prospect', label: 'Prospect' },
-  { value: 'dormant', label: 'Dormant' },
+  { value: 'follow_up', label: 'Follow-up' },
 ]
 
 export default function Clients() {
@@ -55,9 +52,9 @@ export default function Clients() {
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     return clients.filter(c => {
-      if (filter === 'needs_contact') {
-        if (contactHealth(c.last_outreach_on).level === 'green') return false
-      } else if (filter !== 'all' && c.status !== filter) return false
+      const overdue = contactHealth(c.last_outreach_on).level !== 'green'
+      if (filter === 'follow_up' && !overdue) return false
+      if (filter === 'active' && overdue) return false
       if (!q) return true
       return [c.name, c.contact_name, c.company, c.rep, c.email, c.phone]
         .some(v => v?.toLowerCase().includes(q))
@@ -155,7 +152,7 @@ export default function Clients() {
                 filter === f.value ? 'bg-[#2f3a24] text-[#ece5d3]' : 'text-slate-500 hover:bg-slate-100'
               }`}
             >
-              {f.label}{f.value === 'needs_contact' && needsCount ? ` (${needsCount})` : ''}
+              {f.label}{f.value === 'follow_up' && needsCount ? ` (${needsCount})` : ''}
             </button>
           ))}
         </div>
@@ -180,7 +177,7 @@ export default function Clients() {
                   <button onClick={() => setSelectedId(c.id)} className="min-w-0 text-left">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
-                      <Badge status={c.status} kind="client" />
+                      {c.status === 'vip' && <Badge status="vip" kind="client" />}
                     </div>
                     <div className="mt-0.5 truncate text-xs text-slate-400">
                       {c.phone || c.company || c.contact_name || '—'}{c.rep ? ` · ${c.rep}` : ''}

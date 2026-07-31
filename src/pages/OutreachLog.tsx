@@ -1,16 +1,18 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../lib/auth'
-import { loadBook, deleteOutreach, type Book } from '../lib/db'
-import { Card, Loading, ErrorNote, EmptyState, Badge, Button, PageHeader, DeleteButton, statusLabel } from '../components/ui'
+import { loadBook, withStats, addOutreach, type Book } from '../lib/db'
+import { Card, Loading, ErrorNote, EmptyState, Badge, Button, PageHeader, ContactFlag } from '../components/ui'
 import { OutreachModal } from '../components/modals'
-import { shortDate } from '../lib/format'
+import { useToast } from '../hooks/useToast'
+import { contactHealth, todayISO } from '../lib/format'
+import type { ClientStats } from '../lib/types'
 
 export default function OutreachLog() {
   const { tenantId } = useAuth()
+  const { toast } = useToast()
   const [book, setBook]       = useState<Book | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState<string | null>(null)
-  const [search, setSearch]   = useState('')
   const [showLog, setShowLog] = useState(false)
 
   async function reload() {
@@ -21,23 +23,19 @@ export default function OutreachLog() {
   }
   useEffect(() => { void reload() /* eslint-disable-next-line */ }, [tenantId])
 
-  const clientName = useMemo(
-    () => Object.fromEntries((book?.clients ?? []).map(c => [c.id, c.name])),
-    [book],
-  )
-  const clientOptions = (book?.clients ?? []).map(c => ({ id: c.id, name: c.name }))
+  const clients = useMemo(() => (book ? withStats(book) : []), [book])
+  const clientOptions = clients.map(c => ({ id: c.id, name: c.name }))
 
-  const rows = useMemo(() => {
-    const q = search.trim().toLowerCase()
-    if (!q) return book?.outreach ?? []
-    return (book?.outreach ?? []).filter(o =>
-      (clientName[o.client_id] ?? '').toLowerCase().includes(q) || (o.notes ?? '').toLowerCase().includes(q),
-    )
-  }, [book, search, clientName])
+  const graded = useMemo(() => clients.map(c => ({ c, h: contactHealth(c.last_outreach_on) })), [clients])
+  const needs = graded.filter(x => x.h.level !== 'green').sort((a, b) => (b.h.days ?? 99999) - (a.h.days ?? 99999))
+  const fine  = graded.filter(x => x.h.level === 'green').sort((a, b) => (a.h.days ?? 0) - (b.h.days ?? 0))
 
-  async function del(id: string) {
-    if (!window.confirm('Delete this outreach entry?')) return
-    await deleteOutreach(id); void reload()
+  async function logContact(c: ClientStats) {
+    try {
+      await addOutreach({ tenant_id: tenantId!, client_id: c.id, occurred_on: todayISO(), type: 'check_in', channel: 'text', outcome: 'responded', notes: null })
+      toast(`Logged contact with ${c.name}.`)
+      void reload()
+    } catch (e) { toast(e instanceof Error ? e.message : 'Could not log.', 'error') }
   }
 
   if (loading) return <Loading />
@@ -46,46 +44,69 @@ export default function OutreachLog() {
     <div>
       <PageHeader
         title="Outreach"
-        subtitle={`${book?.outreach.length ?? 0} touches logged`}
-        action={<Button onClick={() => setShowLog(true)} disabled={clientOptions.length === 0}>Log outreach</Button>}
+        subtitle="Who needs a follow-up, and who's fine for now"
+        action={<Button variant="secondary" onClick={() => setShowLog(true)} disabled={clients.length === 0}>Log a touch</Button>}
       />
 
       {error && <div className="mb-6"><ErrorNote message={error} /></div>}
 
-      {/* One lever: search. */}
-      <input
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        placeholder="Search by client or notes…"
-        className="mb-4 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-[#c15a2e] focus:outline-none focus:ring-2 focus:ring-[#c15a2e]/20"
-      />
-
-      {(book?.outreach.length ?? 0) === 0 ? (
-        <Card><EmptyState message="No outreach logged yet. Every check-in, pitch, and follow-up shows up here." action={<Button onClick={() => setShowLog(true)} disabled={clientOptions.length === 0}>Log your first touch</Button>} /></Card>
-      ) : rows.length === 0 ? (
-        <Card><EmptyState message="No outreach matches your search." /></Card>
+      {clients.length === 0 ? (
+        <Card><EmptyState message="No clients yet. Add clients and their follow-up status shows up here." /></Card>
       ) : (
-        <Card className="overflow-hidden">
-          <div className="divide-y divide-slate-100">
-            {rows.map(o => (
-              <div key={o.id} className="group flex items-start justify-between gap-4 px-5 py-3.5 hover:bg-slate-50">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="text-sm font-medium text-slate-800">{clientName[o.client_id] ?? 'Unknown'}</span>
-                    <Badge status={o.type} kind="outreachType" />
-                    {o.outcome && <Badge status={o.outcome} kind="outcome" />}
-                    <span className="text-xs text-slate-400">{statusLabel(o.channel)}</span>
+        <div className="space-y-6">
+          {/* Needs a follow-up */}
+          <Card className="overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-3.5">
+              <ContactFlag level="red" />
+              <h2 className="text-sm font-semibold text-slate-800">Needs a follow-up</h2>
+              <span className="text-xs text-slate-400">({needs.length})</span>
+            </div>
+            {needs.length === 0 ? (
+              <p className="px-5 py-8 text-center text-sm text-slate-400">Everyone's been contacted in the last 30 days. You're good.</p>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {needs.map(({ c, h }) => (
+                  <div key={c.id} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-slate-50">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
+                        {c.status === 'vip' && <Badge status="vip" kind="client" />}
+                      </div>
+                      <div className="mt-0.5 text-xs text-slate-400">
+                        {c.phone ? `${c.phone} · ` : ''}<span className="font-medium text-rose-600">{h.label}</span>
+                      </div>
+                    </div>
+                    <Button size="sm" onClick={() => logContact(c)}>Log contact</Button>
                   </div>
-                  {o.notes && <p className="mt-1 text-sm text-slate-600">{o.notes}</p>}
-                </div>
-                <div className="flex shrink-0 items-center gap-2">
-                  <span className="text-xs text-slate-400">{shortDate(o.occurred_on)}</span>
-                  <div className="opacity-0 transition-opacity group-hover:opacity-100"><DeleteButton onClick={() => del(o.id)} /></div>
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </Card>
+            )}
+          </Card>
+
+          {/* Fine for now */}
+          <Card className="overflow-hidden">
+            <div className="flex items-center gap-2 border-b border-slate-100 px-5 py-3.5">
+              <ContactFlag level="green" />
+              <h2 className="text-sm font-semibold text-slate-800">Fine for now</h2>
+              <span className="text-xs text-slate-400">({fine.length})</span>
+            </div>
+            {fine.length === 0 ? (
+              <p className="px-5 py-8 text-center text-sm text-slate-400">No one contacted in the last 30 days yet.</p>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {fine.map(({ c, h }) => (
+                  <div key={c.id} className="flex items-center justify-between gap-3 px-5 py-3">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
+                      {c.status === 'vip' && <Badge status="vip" kind="client" />}
+                    </div>
+                    <span className="shrink-0 text-xs font-medium text-emerald-600">{h.label}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </Card>
+        </div>
       )}
 
       {showLog && <OutreachModal tenantId={tenantId!} clients={clientOptions} onClose={() => setShowLog(false)} onSaved={reload} />}
