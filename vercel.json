@@ -2,5 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
   "rewrites": [{ "source": "/((?!api/).*)", "destination": "/index.html" }],
-  "crons": [{ "path": "/api/daily-followups", "schedule": "0 13 * * *" }]
+  "crons": [{ "path": "/api/followups", "schedule": "0 13 * * 3" }]
 }
