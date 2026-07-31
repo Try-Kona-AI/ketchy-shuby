@@ -3,7 +3,7 @@
 // contacted in 30+ days (or never) and emails a digest to the team.
 //
 // Required env vars (set in Vercel project settings):
-//   SUPABASE_URL                 e.g. https://ulytwajdeteqnscfkmjs.supabase.co
+//   SUPABASE_URL                 e.g. https://YOUR-PROJECT.supabase.co
 //   SUPABASE_SERVICE_ROLE_KEY    Supabase -> Settings -> API -> service_role (secret)
 //   RESEND_API_KEY               Kona Resend API key
 //   FOLLOWUP_RECIPIENTS          comma-separated emails (e.g. viscount@..,alex@..)
