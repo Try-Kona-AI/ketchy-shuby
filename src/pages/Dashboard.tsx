@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../lib/auth'
 import { loadBook, withStats, addOutreach, type Book } from '../lib/db'
-import { Card, Loading, ErrorNote, Badge, Button, ContactFlag } from '../components/ui'
+import { Card, Loading, ErrorNote, Button, ContactFlag } from '../components/ui'
 import { ClientModal, OutreachModal, PurchaseModal } from '../components/modals'
 import { useToast } from '../hooks/useToast'
 import { money, timeAgo, todayISO, greeting, monthLabel, contactHealth, birthdayLabel, daysUntilBirthday } from '../lib/format'
@@ -125,7 +125,6 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2">
                     <ContactFlag level={h.level} />
                     <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
-                    {c.status === 'vip' && <Badge status="vip" kind="client" />}
                   </div>
                   <div className="mt-0.5 pl-4 text-xs text-slate-400">{c.phone ? `${c.phone} · ` : ''}{money(c.lifetime_spend)} lifetime</div>
                 </Link>
@@ -188,13 +187,7 @@ export default function Dashboard() {
             {recentOutreach.length === 0 && <p className="px-5 py-8 text-center text-sm text-slate-400">No outreach logged yet.</p>}
             {recentOutreach.map(o => (
               <div key={o.id} className="flex items-center justify-between gap-3 px-5 py-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="truncate text-sm font-medium text-slate-800">{clientName[o.client_id] ?? 'Unknown'}</span>
-                    <Badge status={o.type} kind="outreachType" />
-                  </div>
-                  {o.notes && <div className="mt-0.5 truncate text-xs text-slate-400">{o.notes}</div>}
-                </div>
+                <span className="truncate text-sm font-medium text-slate-800">{clientName[o.client_id] ?? 'Unknown'}</span>
                 <span className="shrink-0 text-xs text-slate-400">{timeAgo(o.occurred_on)}</span>
               </div>
             ))}

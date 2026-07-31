@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '../lib/auth'
 import { loadBook, withStats, addOutreach, type Book } from '../lib/db'
-import { Card, Loading, ErrorNote, EmptyState, Badge, Button, PageHeader, ContactFlag } from '../components/ui'
+import { Card, Loading, ErrorNote, EmptyState, Button, PageHeader, ContactFlag } from '../components/ui'
 import { OutreachModal } from '../components/modals'
 import { useToast } from '../hooks/useToast'
 import { contactHealth, todayISO } from '../lib/format'
@@ -70,7 +70,6 @@ export default function OutreachLog() {
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
-                        {c.status === 'vip' && <Badge status="vip" kind="client" />}
                       </div>
                       <div className="mt-0.5 text-xs text-slate-400">
                         {c.phone ? `${c.phone} · ` : ''}<span className="font-medium text-rose-600">{h.label}</span>
@@ -98,7 +97,6 @@ export default function OutreachLog() {
                   <div key={c.id} className="flex items-center justify-between gap-3 px-5 py-3">
                     <div className="flex min-w-0 items-center gap-2">
                       <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
-                      {c.status === 'vip' && <Badge status="vip" kind="client" />}
                     </div>
                     <span className="shrink-0 text-xs font-medium text-emerald-600">{h.label}</span>
                   </div>

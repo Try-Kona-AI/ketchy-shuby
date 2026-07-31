@@ -177,7 +177,6 @@ export default function Clients() {
                   <button onClick={() => setSelectedId(c.id)} className="min-w-0 text-left">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-medium text-slate-800">{c.name}</span>
-                      {c.status === 'vip' && <Badge status="vip" kind="client" />}
                     </div>
                     <div className="mt-0.5 truncate text-xs text-slate-400">
                       {c.phone || c.company || c.contact_name || '—'}{c.rep ? ` · ${c.rep}` : ''}
@@ -257,7 +256,6 @@ function ClientDrawer({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h2 className="truncate text-lg font-bold text-slate-900">{client.name}</h2>
-              <Badge status={client.status} kind="client" />
             </div>
             <p className="mt-0.5 text-sm text-slate-500">
               {[client.company, client.contact_name].filter(Boolean).join(' · ') || 'No company on file'}
